@@ -1,0 +1,11 @@
+{
+  "name": "gatsby-remark-containers",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "rehype-stringify": "^6.0.0",
+    "remark-containers": "^1.1.0",
+    "remark-rehype": "^5.0.0"
+  }
+}
