@@ -1,5 +1,6 @@
 import { ControlledOffCanvas } from "@cultureamp/kaizen-component-library"
 import classNames from "classnames"
+import { throttle } from "lodash"
 import * as React from "react"
 import Media from "react-media"
 import {
@@ -20,6 +21,7 @@ type SupportedChild =
   | React.ReactElement<MenuProps>
 
 type Props = {
+  onHeightChange?: (height: string) => void
   environment?: "production" | "staging" | "test" | "local"
   loading?: boolean
   colorScheme?: "cultureamp" | "kaizen"
@@ -36,6 +38,25 @@ export default class NavigationBar extends React.Component<Props> {
     loading: false,
     colorScheme: "cultureamp",
     badgeHref: "/",
+  }
+  private rootRef = React.createRef<HTMLElement>()
+
+  calculateNavHeight() {
+    console.log("calculateNavHeight")
+  }
+
+  throttledNavHeight() {
+    console.log(this.calculateNavHeight)
+    return throttle(this.calculateNavHeight, 200)
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.calculateNavHeight, false)
+    this.calculateNavHeight()
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.calculateNavHeight)
   }
 
   render() {
@@ -74,6 +95,7 @@ export default class NavigationBar extends React.Component<Props> {
         {(matches: boolean) =>
           matches ? (
             <ControlledOffCanvas
+              ref={this.rootRef}
               headerComponent={this.renderBadge()}
               footerComponent={this.props.footerComponent}
               links={[...links, ...otherChildren]}
@@ -82,6 +104,7 @@ export default class NavigationBar extends React.Component<Props> {
             />
           ) : (
             <header
+              ref={this.rootRef}
               className={classNames(styles.navigationBar, styles[colorScheme])}
             >
               {this.renderBadge()}
