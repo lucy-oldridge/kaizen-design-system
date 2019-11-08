@@ -23,7 +23,6 @@ class App extends React.Component<{}, AppState> {
   }
 
   render() {
-    console.log(this.state)
     return (
       <NavbarContext.Provider
         value={{
