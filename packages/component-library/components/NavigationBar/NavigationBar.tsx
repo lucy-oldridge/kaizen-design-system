@@ -1,6 +1,5 @@
 import { ControlledOffCanvas } from "@cultureamp/kaizen-component-library"
 import classNames from "classnames"
-import { throttle } from "lodash"
 import * as React from "react"
 import Media from "react-media"
 import {
@@ -40,9 +39,7 @@ export default class NavigationBar extends React.Component<Props> {
     badgeHref: "/",
   }
   private rootRef = React.createRef<HTMLElement>()
-  private static state = {
-    height: 0,
-  }
+
   calculateNavHeight() {
     if (
       this.rootRef &&
@@ -53,11 +50,6 @@ export default class NavigationBar extends React.Component<Props> {
       this.setState(() => ({ height: this.rootRef.current!.offsetHeight }))
       this.props.onHeightChange(this.rootRef.current.offsetHeight)
     }
-  }
-
-  throttledNavHeight() {
-    console.log(this.calculateNavHeight)
-    return throttle(this.calculateNavHeight, 200)
   }
 
   componentDidMount() {
