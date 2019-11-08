@@ -4,35 +4,38 @@ import {
   NavigationBar,
 } from "@cultureamp/kaizen-component-library/components/NavigationBar"
 import * as React from "react"
-import { NavbarContext } from "./navbar-context"
+import { NavbarContext, NavbarContextState } from "./navbar-context"
+import NestedChild from "./nested-child"
 
-const styles = require("./styles.scss")
+interface AppState {
+  height: number
+}
 
-class App extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      navHeight: "40px",
-    }
+class App extends React.Component<{}, AppState> {
+  readonly state = {
+    height: 0,
   }
 
-  onUpdateHeight = newValue => {
+  updateHeight = (newHeight: number) => {
     this.setState(() => ({
-      navHeight: newValue,
+      height: newHeight,
     }))
   }
 
   render() {
+    console.log(this.state)
     return (
-      <>
-        <NavigationBar
-          onHeightChange={this.onUpdateHeight}
-          colorScheme="kaizen"
-        >
-          <Link text="Home" href="#" active />
-          <Link text="Guidelines" href="#" />
-          <Link text="Components" href="#" />
-          <Link text="Status" href="#" />
+      <NavbarContext.Provider
+        value={{
+          height: this.state.height,
+          onUpdateHeight: this.updateHeight,
+        }}
+      >
+        <NavigationBar onHeightChange={this.updateHeight} colorScheme="kaizen">
+          <Link text="Home" href="#anchor-1" active />
+          <Link text="Guidelines" href="#anchor-2" />
+          <Link text="Components" href="#anchor-3" />
+          <Link text="Status" href="#anchor-4" />
           <Menu
             heading="Custom menu..."
             items={[
@@ -48,17 +51,8 @@ class App extends React.Component {
             ]}
           />
         </NavigationBar>
-        <div className={styles.spacer}></div>
-        <p>Example text</p>
-        <div className={styles.spacer}></div>
-        <p>Example text</p>
-        <div className={styles.spacer}></div>
-        <p>Example text</p>
-        <div className={styles.spacer}></div>
-        <p>Example text</p>
-        <div className={styles.spacer}></div>
-        <p>Example text</p>
-      </>
+        <NestedChild />
+      </NavbarContext.Provider>
     )
   }
 }

@@ -21,7 +21,7 @@ type SupportedChild =
   | React.ReactElement<MenuProps>
 
 type Props = {
-  onHeightChange?: (height: string) => void
+  onHeightChange?: (height: number) => void
   environment?: "production" | "staging" | "test" | "local"
   loading?: boolean
   colorScheme?: "cultureamp" | "kaizen"
@@ -40,9 +40,19 @@ export default class NavigationBar extends React.Component<Props> {
     badgeHref: "/",
   }
   private rootRef = React.createRef<HTMLElement>()
-
+  private static state = {
+    height: 0,
+  }
   calculateNavHeight() {
-    console.log("calculateNavHeight")
+    if (
+      this.rootRef &&
+      this.rootRef.current &&
+      this.rootRef.current.offsetHeight &&
+      this.props.onHeightChange
+    ) {
+      this.setState(() => ({ height: this.rootRef.current!.offsetHeight }))
+      this.props.onHeightChange(this.rootRef.current.offsetHeight)
+    }
   }
 
   throttledNavHeight() {
@@ -51,12 +61,12 @@ export default class NavigationBar extends React.Component<Props> {
   }
 
   componentDidMount() {
-    window.addEventListener("resize", this.calculateNavHeight, false)
+    window.addEventListener("resize", this.calculateNavHeight.bind(this), false)
     this.calculateNavHeight()
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.calculateNavHeight)
+    window.removeEventListener("resize", this.calculateNavHeight.bind(this))
   }
 
   render() {
@@ -91,29 +101,14 @@ export default class NavigationBar extends React.Component<Props> {
     })
 
     return (
-      <Media query={MOBILE_QUERY}>
-        {(matches: boolean) =>
-          matches ? (
-            <ControlledOffCanvas
-              ref={this.rootRef}
-              headerComponent={this.renderBadge()}
-              footerComponent={this.props.footerComponent}
-              links={[...links, ...otherChildren]}
-              heading="Menu"
-              menuId="menu"
-            />
-          ) : (
-            <header
-              ref={this.rootRef}
-              className={classNames(styles.navigationBar, styles[colorScheme])}
-            >
-              {this.renderBadge()}
-              {this.renderLinks(links)}
-              {this.renderOtherChildren(otherChildren)}
-            </header>
-          )
-        }
-      </Media>
+      <header
+        ref={this.rootRef}
+        className={classNames(styles.navigationBar, styles[colorScheme])}
+      >
+        {this.renderBadge()}
+        {this.renderLinks(links)}
+        {this.renderOtherChildren(otherChildren)}
+      </header>
     )
   }
 
