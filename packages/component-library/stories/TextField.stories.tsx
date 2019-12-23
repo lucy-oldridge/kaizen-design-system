@@ -390,4 +390,5 @@ storiesOf("TextField", module)
 
 loadElmStories("TextField (Elm)", module, require("./TextFieldStories.elm"), [
   "Default",
+  "Default /w icon",
 ])
